@@ -4,9 +4,12 @@ using UnityEngine;
 
 public class CharacterMovementController : MonoBehaviour
 {
-    [Header("Movement Metric")]
+    [Header("Movement")]
     public float moveAccel;
     public float maxSpeed;
+
+    private Rigidbody2D rig;
+
 
     [Header("Jump")]
     public float jumpAccel;
@@ -19,11 +22,10 @@ public class CharacterMovementController : MonoBehaviour
     public float groundRaycastDistance;
     public LayerMask groundLayerMask;
 
-    Rigidbody2D rig;
-    Animator anim;
 
-    CharacterSoundController sound;
+    private Animator anim;
 
+    private CharacterSoundController sound;
 
     [Header("Scoring")]
     public ScoreController score;
@@ -37,16 +39,14 @@ public class CharacterMovementController : MonoBehaviour
     [Header("Camera")]
     public CameraMoveController gameCamera;
 
-    // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         rig = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
         sound = GetComponent<CharacterSoundController>();
-    }   
+    }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
         // read input
         if (Input.GetMouseButtonDown(0))
@@ -81,6 +81,11 @@ public class CharacterMovementController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        Vector2 velocityVector = rig.velocity;
+        velocityVector.x = Mathf.Clamp(velocityVector.x + moveAccel * Time.deltaTime, 0.0f, maxSpeed);
+
+        rig.velocity = velocityVector;
+
         // raycast ground
         RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, groundRaycastDistance, groundLayerMask);
         if (hit)
@@ -95,8 +100,7 @@ public class CharacterMovementController : MonoBehaviour
             isOnGround = false;
         }
 
-        Vector2 velocityVector = rig.velocity;
-
+        // calculate velocity vector
         if (isJumping)
         {
             velocityVector.y += jumpAccel;
@@ -106,12 +110,6 @@ public class CharacterMovementController : MonoBehaviour
         velocityVector.x = Mathf.Clamp(velocityVector.x + moveAccel * Time.deltaTime, 0.0f, maxSpeed);
 
         rig.velocity = velocityVector;
-    }
-
-
-    private void OnDrawGizmos()
-    {
-        Debug.DrawLine(transform.position, transform.position + (Vector3.down * groundRaycastDistance), Color.white);
     }
 
     private void GameOver()
@@ -127,5 +125,10 @@ public class CharacterMovementController : MonoBehaviour
 
         // disable this too
         this.enabled = false;
+    }
+
+    private void OnDrawGizmos()
+    {
+        Debug.DrawLine(transform.position, transform.position + (Vector3.down * groundRaycastDistance), Color.white);
     }
 }

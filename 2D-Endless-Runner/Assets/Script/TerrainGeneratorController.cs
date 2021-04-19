@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class TerrainGeneratorController : MonoBehaviour
 {
-
-
     [Header("Templates")]
     public List<TerrainTemplateController> terrainTemplates;
     public float terrainTemplateWidth;
