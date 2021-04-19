@@ -45,7 +45,7 @@ public class TerrainGeneratorController : MonoBehaviour
 
         while (lastGeneratedPositionX < GetHorizontalPositionEnd())
         {
-            /*GenerateTerrain(lastGeneratedPositionX, terrain);*/
+            GenerateTerrain(lastGeneratedPositionX);
             lastGeneratedPositionX += terrainTemplateWidth;
         }
     }
